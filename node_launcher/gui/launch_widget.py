@@ -6,6 +6,7 @@ from node_launcher.constants import NODE_LAUNCHER_RELEASE, UPGRADE
 from node_launcher.gui.advertisement_label import AdvertisementLabel
 from node_launcher.gui.data_directory import DataDirectoryBox
 from node_launcher.gui.network_group_box import NetworkGroupBox
+from node_launcher.lnd_client.lnd_client import LndClient
 from node_launcher.node_launcher import NodeLauncher
 from node_launcher.node_software.launcher_software import LauncherSoftware
 
@@ -15,8 +16,9 @@ class LaunchWidget(QtWidgets.QWidget):
     testnet_group_box: NetworkGroupBox
     grid: QGridLayout
     node_launcher: NodeLauncher
+    lnd_client = LndClient
 
-    def __init__(self, node_launcher: NodeLauncher):
+    def __init__(self, node_launcher: NodeLauncher, lnd_client: LndClient):
         super().__init__()
         self.node_launcher = node_launcher
         self.message_box = QMessageBox(self)

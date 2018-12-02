@@ -3,12 +3,14 @@ import os
 from node_launcher.configuration.configuration_file import ConfigurationFile
 from node_launcher.configuration.hard_drives import HardDrives
 from node_launcher.constants import BITCOIN_DATA_PATH, OPERATING_SYSTEM
+from node_launcher.node_software.bitcoin_software import BitcoinSoftware
 from node_launcher.utilities import get_random_password
 
 
 class BitcoinConfiguration(object):
     file: ConfigurationFile
     hard_drives: HardDrives
+    software: BitcoinSoftware
 
     def __init__(self, configuration_path: str = None):
         if configuration_path is None:
@@ -17,6 +19,7 @@ class BitcoinConfiguration(object):
 
         self.file = ConfigurationFile(configuration_path)
         self.hard_drives = HardDrives()
+        self.software = BitcoinSoftware()
 
         if self.file.rpcuser is None:
             self.file.rpcuser = 'default_user'
