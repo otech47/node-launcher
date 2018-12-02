@@ -22,7 +22,7 @@ class DataDirectoryBox(QtWidgets.QGroupBox):
 
         self.show_directory_button = QtWidgets.QPushButton('Show Directory')
         # noinspection PyUnresolvedReferences
-        self.show_directory_button.clicked.connect(lambda: reveal(self.datadir))
+        self.show_directory_button.clicked.connect(self.reveal_datadir)
 
         self.select_directory_button = QtWidgets.QPushButton('Select Directory')
         # noinspection PyUnresolvedReferences
@@ -50,3 +50,10 @@ class DataDirectoryBox(QtWidgets.QGroupBox):
         self.command_generator.mainnet.bitcoin.set_prune()
         self.datadir = data_directory
         self.datadir_label.setText(data_directory)
+
+    def reveal_datadir(self):
+        try:
+            reveal(self.datadir)
+        except (NotADirectoryError, FileNotFoundError):
+            self.error_message.showMessage(f'{self.datadir} not found')
+            return

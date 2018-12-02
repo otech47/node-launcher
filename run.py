@@ -16,10 +16,10 @@ if __name__ == "__main__":
     bitcoin_testnet_conf = BitcoinConfiguration()
     lnd_mainnet_conf = LndConfiguration()
     lnd_testnet_conf = LndConfiguration()
-    mainnet_configuration = Configuration('testnet',
+    mainnet_configuration = Configuration('mainnet',
                                           bitcoin_configuration=bitcoin_mainnet_conf,
                                           lnd_configuration=lnd_mainnet_conf)
-    testnet_configuration = Configuration('mainnet',
+    testnet_configuration = Configuration('testnet',
                                           bitcoin_configuration=bitcoin_testnet_conf,
                                           lnd_configuration=lnd_testnet_conf)
     command_generator = CommandGenerator(

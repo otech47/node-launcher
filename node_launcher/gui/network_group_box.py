@@ -71,7 +71,11 @@ class NetworkGroupBox(QtWidgets.QGroupBox):
     def reveal_macaroons(self):
         macaroons_path = getattr(self.node_launcher.command_generator,
                                  self.network).lnd.macaroon_path(self.network)
-        reveal(macaroons_path)
+        try:
+            reveal(macaroons_path)
+        except (FileNotFoundError, NotADirectoryError):
+            self.error_message.showMessage(f'{macaroons_path} not found')
+            return
 
     def copy_lncli_command(self):
         command = getattr(self.node_launcher.command_generator,

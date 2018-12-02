@@ -18,7 +18,7 @@ os.environ["GRPC_SSL_CIPHER_SUITES"] = 'HIGH+ECDSA'
 
 
 class LndClient(object):
-    def __init__(self, testnet_conf: Configuration, mainnet_conf: Configuration):
+    def __init__(self, configuration: Configuration):
 
         lnd_tls_cert_path = os.path.join(self.main_lnd_path, 'tls.cert')
         self.lnd_tls_cert = open(lnd_tls_cert_path, 'rb').read()
