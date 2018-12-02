@@ -70,7 +70,7 @@ class NetworkGroupBox(QtWidgets.QGroupBox):
 
     def reveal_macaroons(self):
         macaroons_path = getattr(self.node_launcher.command_generator,
-                                 self.network).dir.macaroon_path(self.network)
+                                 self.network).lnd.macaroon_path(self.network)
         reveal(macaroons_path)
 
     def copy_lncli_command(self):
