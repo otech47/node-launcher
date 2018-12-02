@@ -1,7 +1,7 @@
 from typing import List
 
 from node_launcher.configuration import Configuration
-from node_launcher.constants import OPERATING_SYSTEM, LND_DATA_PATH, IS_WINDOWS
+from node_launcher.constants import OPERATING_SYSTEM, LND_DIR_PATH, IS_WINDOWS
 
 
 class CommandGenerator(object):
@@ -18,7 +18,7 @@ class CommandGenerator(object):
         if IS_WINDOWS:
             dir_arg = f'-datadir="{n.bitcoin.file.datadir}"'
         command = [
-            n.dir.bitcoin.bitcoin_qt,
+            n.bitcoin.software.bitcoin_qt,
             dir_arg,
             '-server=1',
             '-disablewallet=1',
@@ -52,8 +52,8 @@ class CommandGenerator(object):
     @staticmethod
     def lnd(n: Configuration) -> List[str]:
         return [
-            n.dir.lnd.lnd,
-            f'--lnddir="{n.dir.lnd_data_path}"',
+            n.lnd.software.lnd,
+            f'--lnddir="{n.lnd.lnddir}"',
             '--debuglevel=info',
             '--bitcoin.active',
             '--bitcoin.node=bitcoind',
@@ -80,16 +80,16 @@ class CommandGenerator(object):
     @staticmethod
     def lncli(n: Configuration):
         base_command = [
-            f'"{n.dir.lnd.lncli}"',
+            f'"{n.lnd.software.lncli}"',
         ]
         if n.ports.grpc != 10009:
             base_command.append(f'--rpcserver=localhost:{n.ports.grpc}')
         if n.network != 'mainnet':
             base_command.append(f'--network={n.network}')
-        if n.dir.lnd_data_path != LND_DATA_PATH[OPERATING_SYSTEM]:
-            base_command.append(f'--lnddir="{n.dir.lnd_data_path}"')
-            base_command.append(f'--macaroonpath="{n.dir.macaroon_path(n.network)}"')
-            base_command.append(f'--tlscertpath="{n.dir.tls_cert_path}"')
+        if n.lnd.lnddir != LND_DIR_PATH[OPERATING_SYSTEM]:
+            base_command.append(f'--lnddir="{n.lnd.lnddir}"')
+            base_command.append(f'--macaroonpath="{n.lnd.macaroon_path(n.network)}"')
+            base_command.append(f'--tlscertpath="{n.lnd.tls_cert_path}"')
         return base_command
 
     def testnet_lncli(self) -> List[str]:

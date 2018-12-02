@@ -1,4 +1,4 @@
 from .bitcoin_configuration import BitcoinConfiguration
 from .configuration import Configuration
-from .directory_configuration import DirectoryConfiguration
+from .lnd_configuration import LndConfiguration
 from .port_configuration import PortConfiguration

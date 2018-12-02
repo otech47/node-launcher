@@ -18,7 +18,7 @@ class LaunchWidget(QtWidgets.QWidget):
     node_launcher: NodeLauncher
     lnd_client = LndClient
 
-    def __init__(self, node_launcher: NodeLauncher, lnd_client: LndClient):
+    def __init__(self, node_launcher: NodeLauncher):
         super().__init__()
         self.node_launcher = node_launcher
         self.message_box = QMessageBox(self)

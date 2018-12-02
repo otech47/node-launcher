@@ -33,7 +33,9 @@ class BitcoinConfiguration(object):
         if self.file.prune is None:
             self.set_prune(self.hard_drives.should_prune(self.file.datadir, True))
 
-    def set_prune(self, should_prune: bool):
+    def set_prune(self, should_prune: bool = None):
+        if should_prune is None:
+            should_prune = self.hard_drives.should_prune(self.file.datadir, True)
         self.file.prune = should_prune
         self.file.txindex = not should_prune
 
