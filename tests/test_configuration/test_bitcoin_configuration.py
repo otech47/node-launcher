@@ -11,6 +11,7 @@ from node_launcher.constants import (
     BITCOIN_DATA_PATH,
     OPERATING_SYSTEM
 )
+from node_launcher.utilities import is_port_in_use
 
 
 @pytest.fixture
@@ -43,7 +44,8 @@ class TestBitcoinConfiguration(object):
     @staticmethod
     def test_prune(bitcoin_configuration: BitcoinConfiguration):
         datadir = bitcoin_configuration.file.datadir
-        should_prune = bitcoin_configuration.hard_drives.should_prune(datadir, True)
+        should_prune = bitcoin_configuration.hard_drives.should_prune(datadir,
+                                                                      True)
         assert bitcoin_configuration.file.prune == should_prune
 
     @staticmethod
@@ -77,3 +79,13 @@ class TestBitcoinConfiguration(object):
         txindex = bitcoin_configuration.file.txindex
         assert datadir
         assert prune != txindex
+
+    def test_zmq_block(self, bitcoin_configuration: BitcoinConfiguration):
+        assert not is_port_in_use(bitcoin_configuration.zmq_block)
+
+    def test_zmq_tx(self, bitcoin_configuration: BitcoinConfiguration):
+        assert not is_port_in_use(bitcoin_configuration.zmq_tx)
+
+    def test_detect_zmq_ports(self,
+                              bitcoin_configuration: BitcoinConfiguration):
+        assert isinstance(bitcoin_configuration.detect_zmq_ports(), bool)

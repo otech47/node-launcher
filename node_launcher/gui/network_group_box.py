@@ -8,6 +8,7 @@ from grpc._channel import _Rendezvous
 from node_launcher.constants import LINUX, OPERATING_SYSTEM
 from node_launcher.gui.horizontal_line import HorizontalLine
 from node_launcher.gui.image_label import ImageLabel
+from node_launcher.gui.seed_dialog import SeedDialog
 from node_launcher.lnd_client.lnd_client import LndClient
 from node_launcher.node_launcher import NodeLauncher
 from node_launcher.utilities import reveal
@@ -26,6 +27,7 @@ class NetworkGroupBox(QtWidgets.QGroupBox):
                                             self.network))
 
         self.password_dialog = QInputDialog(self)
+        self.seed_dialog = SeedDialog(self)
 
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(ImageLabel(f'bitcoin-{network}.png'))
@@ -134,9 +136,9 @@ class NetworkGroupBox(QtWidgets.QGroupBox):
                                                 QLineEdit.Password)
             if not ok:
                 return
-
-            initialize_wallet_response = self.lnd_client.initialize_wallet(
-                password, generate_seed_response.cipher_seed_mnemonic)
+            self.seed_dialog.show()
+           # initialize_wallet_response = self.lnd_client.initialize_wallet(
+            #    password, generate_seed_response.cipher_seed_mnemonic)
 
         except _Rendezvous as e:
             self.error_message.showMessage(e._state.details)
