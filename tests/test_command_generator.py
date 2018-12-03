@@ -1,28 +1,3 @@
-from tempfile import NamedTemporaryFile
-
-import pytest
-
-from node_launcher.command_generator import CommandGenerator
-from node_launcher.configuration import Configuration, LndConfiguration
-from node_launcher.configuration.bitcoin_configuration import \
-    BitcoinConfiguration
-
-
-@pytest.fixture
-def command_generator():
-    with NamedTemporaryFile(suffix='-bitcoin-mainnet.conf', delete=False) as bitcoin_mainnet_file:
-        with NamedTemporaryFile(suffix='-bitcoin-testnet.conf', delete=False) as bitcoin_testnet_file:
-            with NamedTemporaryFile(suffix='-lnd-mainnet.conf', delete=False) as lnd_mainnet_file:
-                with NamedTemporaryFile(suffix='-lnd-testnet.conf', delete=False) as lnd_testnet_file:
-                    bitcoin_mainnet_conf = BitcoinConfiguration(bitcoin_mainnet_file.name)
-                    bitcoin_testnet_conf = BitcoinConfiguration(bitcoin_testnet_file.name)
-                    lnd_mainnet_conf = LndConfiguration(lnd_mainnet_file.name)
-                    lnd_testnet_conf = LndConfiguration(lnd_testnet_file.name)
-                    command_generator = CommandGenerator(
-                        mainnet_conf=Configuration('mainnet', bitcoin_mainnet_conf, lnd_mainnet_conf),
-                        testnet_conf=Configuration('testnet', bitcoin_testnet_conf, lnd_testnet_conf)
-                    )
-    return command_generator
 
 
 class TestCommandGenerator(object):

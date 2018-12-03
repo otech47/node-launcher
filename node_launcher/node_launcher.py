@@ -14,10 +14,12 @@ def launch(command: List[str]):
         with NamedTemporaryFile(suffix='-btc.bat', delete=False) as f:
             f.write(cmd.encode('utf-8'))
             f.flush()
-            result = Popen(['start', 'powershell', '-noexit', '-windowstyle', 'hidden', '-Command', f.name],
-                           stdin=PIPE, stdout=PIPE, stderr=PIPE,
-                           creationflags=DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP,
-                           close_fds=True, shell=True)
+            result = Popen(
+                ['start', 'powershell', '-noexit', '-windowstyle', 'hidden',
+                 '-Command', f.name],
+                stdin=PIPE, stdout=PIPE, stderr=PIPE,
+                creationflags=DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP,
+                close_fds=True, shell=True)
     else:
         result = Popen(command, close_fds=True, shell=False)
 
@@ -32,16 +34,20 @@ def launch_terminal(command: List[str]):
             f.write(f'#!/bin/sh\n{cmd}\n'.encode('utf-8'))
             f.flush()
             call(['chmod', 'u+x', f.name])
-            Popen(['open', '-W', f.name], close_fds=True)
+            result = Popen(['open', '-W', f.name], close_fds=True)
     elif IS_WINDOWS:
         from subprocess import DETACHED_PROCESS, CREATE_NEW_PROCESS_GROUP
         with NamedTemporaryFile(suffix='-lnd.bat', delete=False) as f:
             f.write(cmd.encode('utf-8'))
             f.flush()
-            Popen(['start', 'powershell', '-noexit', '-Command', f.name],
-                  stdin=PIPE, stdout=PIPE, stderr=PIPE,
-                  creationflags=DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP,
-                  close_fds=True, shell=True)
+            result = Popen(
+                ['start', 'powershell', '-noexit', '-Command', f.name],
+                stdin=PIPE, stdout=PIPE, stderr=PIPE,
+                creationflags=DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP,
+                close_fds=True, shell=True)
+    else:
+        raise NotImplementedError()
+    return result
 
 
 class NodeLauncher(object):
