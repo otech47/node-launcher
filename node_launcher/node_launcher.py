@@ -4,6 +4,7 @@ from typing import List
 
 from node_launcher.command_generator import CommandGenerator
 from node_launcher.constants import DARWIN, IS_WINDOWS, OPERATING_SYSTEM
+from node_launcher.lnd_client.lnd_client import LndClient
 
 
 def launch(command: List[str]):
@@ -53,7 +54,8 @@ def launch_terminal(command: List[str]):
 class NodeLauncher(object):
     command_generator: CommandGenerator
 
-    def __init__(self, command_generator, launch_fn=launch,
+    def __init__(self, command_generator: CommandGenerator,
+                 launch_fn=launch,
                  launch_terminal_fn=launch_terminal):
         self.command_generator = command_generator
         self.launch = launch_fn
@@ -74,3 +76,8 @@ class NodeLauncher(object):
     def mainnet_lnd_node(self):
         result = self.launch_terminal(self.command_generator.mainnet_lnd())
         return result
+
+    def unlock_wallet(self, network: str, password: str):
+        lnd_client = LndClient(getattr(self.command_generator, network))
+        response = lnd_client.unlock(password)
+        print('here')
