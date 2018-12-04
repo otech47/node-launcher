@@ -23,7 +23,7 @@ class LndClient(object):
 
         cert_credentials = grpc.ssl_channel_credentials(self.lnd_tls_cert)
 
-        admin_macaroon_path = os.path.join(self.c.lnd.lnddir, 'admin.macaroon')
+        admin_macaroon_path = os.path.join(self.c.lnd.macaroon_path, 'admin.macaroon')
         with open(admin_macaroon_path, 'rb') as f:
             macaroon_bytes = f.read()
             self.macaroon = codecs.encode(macaroon_bytes, 'hex')
