@@ -11,13 +11,13 @@ from node_launcher.constants import (
     BITCOIN_DATA_PATH,
     OPERATING_SYSTEM
 )
-from node_launcher.utilities import is_port_in_use
 
 
 @pytest.fixture
 def bitcoin_configuration():
     with NamedTemporaryFile(suffix='-bitcoin.conf', delete=False) as f:
-        bitcoin_configuration = BitcoinConfiguration(f.name)
+        bitcoin_configuration = BitcoinConfiguration(network='testnet',
+                                                     configuration_path=f.name)
     return bitcoin_configuration
 
 
@@ -27,7 +27,8 @@ class TestBitcoinConfiguration(object):
         with TemporaryDirectory() as tmpdirname:
             os.rmdir(tmpdirname)
             configuration_path = os.path.join(tmpdirname, 'bitcoin.conf')
-            bitcoin_configuration = BitcoinConfiguration(configuration_path)
+            bitcoin_configuration = BitcoinConfiguration(network='testnet',
+                                                         configuration_path=configuration_path)
             assert os.path.isfile(bitcoin_configuration.file.path)
 
     @staticmethod
@@ -80,12 +81,8 @@ class TestBitcoinConfiguration(object):
         assert datadir
         assert prune != txindex
 
-    def test_zmq_block(self, bitcoin_configuration: BitcoinConfiguration):
-        assert not is_port_in_use(bitcoin_configuration.zmq_block)
-
-    def test_zmq_tx(self, bitcoin_configuration: BitcoinConfiguration):
-        assert not is_port_in_use(bitcoin_configuration.zmq_tx)
-
     def test_detect_zmq_ports(self,
                               bitcoin_configuration: BitcoinConfiguration):
-        assert isinstance(bitcoin_configuration.detect_zmq_ports(), bool)
+        result = bitcoin_configuration.detect_zmq_ports()
+        assert bitcoin_configuration.zmq_block_port < bitcoin_configuration.zmq_tx_port
+        assert isinstance(result, bool)

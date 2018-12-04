@@ -18,13 +18,13 @@ def network() -> str:
 
 @pytest.fixture
 def bitcoin_configuration() -> BitcoinConfiguration:
-    bitcoin_configuration = BitcoinConfiguration()
+    bitcoin_configuration = BitcoinConfiguration(network='testnet')
     return bitcoin_configuration
 
 
 @pytest.fixture
 def lnd_configuration() -> LndConfiguration:
-    lnd_configuration = LndConfiguration()
+    lnd_configuration = LndConfiguration(network='testnet')
     return lnd_configuration
 
 
@@ -52,10 +52,14 @@ def command_generator() -> CommandGenerator:
         with NamedTemporaryFile(suffix='-bitcoin-testnet.conf', delete=False) as bitcoin_testnet_file:
             with NamedTemporaryFile(suffix='-lnd-mainnet.conf', delete=False) as lnd_mainnet_file:
                 with NamedTemporaryFile(suffix='-lnd-testnet.conf', delete=False) as lnd_testnet_file:
-                    bitcoin_mainnet_conf = BitcoinConfiguration(bitcoin_mainnet_file.name)
-                    bitcoin_testnet_conf = BitcoinConfiguration(bitcoin_testnet_file.name)
-                    lnd_mainnet_conf = LndConfiguration(lnd_mainnet_file.name)
-                    lnd_testnet_conf = LndConfiguration(lnd_testnet_file.name)
+                    bitcoin_mainnet_conf = BitcoinConfiguration(network='mainnet',
+                                                                configuration_path=bitcoin_mainnet_file.name)
+                    bitcoin_testnet_conf = BitcoinConfiguration(network='testnet',
+                                                                configuration_path=bitcoin_testnet_file.name)
+                    lnd_mainnet_conf = LndConfiguration(network='mainnet',
+                                                        configuration_path=lnd_mainnet_file.name)
+                    lnd_testnet_conf = LndConfiguration(network='testnet',
+                                                        configuration_path=lnd_testnet_file.name)
                     command_generator = CommandGenerator(
                         mainnet_conf=Configuration('mainnet', bitcoin_mainnet_conf, lnd_mainnet_conf),
                         testnet_conf=Configuration('testnet', bitcoin_testnet_conf, lnd_testnet_conf)

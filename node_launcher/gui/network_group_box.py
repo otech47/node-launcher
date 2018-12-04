@@ -96,7 +96,7 @@ class NetworkGroupBox(QtWidgets.QGroupBox):
 
     def reveal_macaroons(self):
         macaroons_path = getattr(self.node_launcher.command_generator,
-                                 self.network).lnd.macaroon_path(self.network)
+                                 self.network).lnd.macaroon_path
         try:
             reveal(macaroons_path)
         except (FileNotFoundError, NotADirectoryError):

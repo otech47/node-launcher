@@ -1,5 +1,5 @@
 import os
-from typing import Any, Union
+from typing import Optional
 
 import psutil
 
@@ -13,6 +13,7 @@ from node_launcher.utilities import get_random_password, get_zmq_port
 class BitcoinConfiguration(object):
     file: ConfigurationFile
     hard_drives: HardDrives
+    process: Optional[psutil.Process]
     software: BitcoinSoftware
     zmq_block_port: int
     zmq_tx_port: int
@@ -26,6 +27,7 @@ class BitcoinConfiguration(object):
         self.hard_drives = HardDrives()
         self.software = BitcoinSoftware()
         self.network = network
+        self.process = self.find_running_node()
 
         if self.file.rpcuser is None:
             self.file.rpcuser = 'default_user'
@@ -65,9 +67,25 @@ class BitcoinConfiguration(object):
         else:
             self.file.datadir = default_datadir
 
-    def detect_zmq_ports(self) -> bool:
+    def find_running_node(self) -> psutil.Process:
+        if self.network == 'mainnet':
+            ports = [8333, 8332]
+        else:
+            ports = [18333, 18332]
         for process in psutil.process_iter():
             if 'bitcoin' in process.name():
                 for connection in process.connections():
+                    if connection.laddr.port in ports:
+                        return process
 
-                    print('here')
+    def detect_zmq_ports(self) -> bool:
+        if self.process is None:
+            return False
+        ports = [c.laddr.port for c in self.process.connections()
+                 if 18500 <= c.laddr.port <= 18600]
+        if len(ports) != 2:
+            raise NotImplementedError(f'''ZMQ ports are not open on 
+{self.network} node, please close it and launch it with the Node Launcher''')
+        self.zmq_block_port = min(ports)
+        self.zmq_tx_port = max(ports)
+        return True

@@ -12,10 +12,10 @@ from node_launcher.node_launcher import NodeLauncher
 if __name__ == "__main__":
     app = QtWidgets.QApplication([])
 
-    bitcoin_mainnet_conf = BitcoinConfiguration()
-    bitcoin_testnet_conf = BitcoinConfiguration()
-    lnd_mainnet_conf = LndConfiguration()
-    lnd_testnet_conf = LndConfiguration()
+    bitcoin_mainnet_conf = BitcoinConfiguration('mainnet')
+    bitcoin_testnet_conf = BitcoinConfiguration('testnet')
+    lnd_mainnet_conf = LndConfiguration('mainnet')
+    lnd_testnet_conf = LndConfiguration('testnet')
     mainnet_configuration = Configuration('mainnet',
                                           bitcoin_configuration=bitcoin_mainnet_conf,
                                           lnd_configuration=lnd_mainnet_conf)

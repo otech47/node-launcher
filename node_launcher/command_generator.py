@@ -24,8 +24,8 @@ class CommandGenerator(object):
             '-disablewallet=1',
             f'-rpcuser={n.bitcoin.file.rpcuser}',
             f'-rpcpassword={n.bitcoin.file.rpcpassword}',
-            f'-zmqpubrawblock=tcp://127.0.0.1:{n.ports.zmq_block}',
-            f'-zmqpubrawtx=tcp://127.0.0.1:{n.ports.zmq_tx}'
+            f'-zmqpubrawblock=tcp://127.0.0.1:{n.bitcoin.zmq_block_port}',
+            f'-zmqpubrawtx=tcp://127.0.0.1:{n.bitcoin.zmq_tx_port}'
         ]
         if n.bitcoin.file.prune:
             command += [
@@ -60,11 +60,11 @@ class CommandGenerator(object):
             '--bitcoind.rpchost=127.0.0.1',
             f'--bitcoind.rpcuser={n.bitcoin.file.rpcuser}',
             f'--bitcoind.rpcpass={n.bitcoin.file.rpcpassword}',
-            f'--bitcoind.zmqpubrawblock=tcp://127.0.0.1:{n.ports.zmq_block}',
-            f'--bitcoind.zmqpubrawtx=tcp://127.0.0.1:{n.ports.zmq_tx}',
-            f'--rpclisten=localhost:{n.ports.grpc}',
-            f'--restlisten=127.0.0.1:{n.ports.rest}',
-            f'--listen=127.0.0.1:{n.ports.node}'
+            f'--bitcoind.zmqpubrawblock=tcp://127.0.0.1:{n.bitcoin.zmq_block_port}',
+            f'--bitcoind.zmqpubrawtx=tcp://127.0.0.1:{n.bitcoin.zmq_tx_port}',
+            f'--rpclisten=localhost:{n.lnd.grpc_port}',
+            f'--restlisten=127.0.0.1:{n.lnd.rest_port}',
+            f'--listen=127.0.0.1:{n.lnd.node_port}'
         ]
 
     def testnet_lnd(self) -> List[str]:
@@ -82,13 +82,13 @@ class CommandGenerator(object):
         base_command = [
             f'"{n.lnd.software.lncli}"',
         ]
-        if n.ports.grpc != 10009:
-            base_command.append(f'--rpcserver=localhost:{n.ports.grpc}')
+        if n.lnd.grpc_port != 10009:
+            base_command.append(f'--rpcserver=localhost:{n.lnd.grpc_port}')
         if n.network != 'mainnet':
             base_command.append(f'--network={n.network}')
         if n.lnd.lnddir != LND_DIR_PATH[OPERATING_SYSTEM]:
             base_command.append(f'--lnddir="{n.lnd.lnddir}"')
-            base_command.append(f'--macaroonpath="{n.lnd.macaroon_path(n.network)}"')
+            base_command.append(f'--macaroonpath="{n.lnd.macaroon_path}"')
             base_command.append(f'--tlscertpath="{n.lnd.tls_cert_path}"')
         return base_command
 
@@ -99,7 +99,7 @@ class CommandGenerator(object):
         return self.lncli(self.mainnet)
 
     def testnet_rest_url(self) -> str:
-        return f'https://localhost:{self.testnet.ports.rest}'
+        return f'https://localhost:{self.testnet.lnd.rest_port}'
 
     def mainnet_rest_url(self) -> str:
-        return f'https://localhost:{self.mainnet.ports.rest}'
+        return f'https://localhost:{self.mainnet.lnd.rest_port}'

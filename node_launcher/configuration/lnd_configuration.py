@@ -23,10 +23,11 @@ class LndConfiguration(object):
             os.mkdir(self.lnddir)
 
         # LND
-        self.rest = get_port(8080)
-        self.node = get_port(9735)
-        self.grpc = get_port(10009)
+        self.rest_port = get_port(8080)
+        self.node_port = get_port(9735)
+        self.grpc_port = get_port(10009)
 
+    @property
     def macaroon_path(self) -> str:
         macaroons_path = os.path.join(self.lnddir, 'data', 'chain', 'bitcoin', self.network)
         return macaroons_path

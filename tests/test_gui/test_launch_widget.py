@@ -14,10 +14,10 @@ from node_launcher.node_launcher import NodeLauncher
 
 @pytest.fixture
 def launch_widget():
-    bitcoin_mainnet_conf = BitcoinConfiguration()
-    bitcoin_testnet_conf = BitcoinConfiguration()
-    lnd_mainnet_conf = LndConfiguration()
-    lnd_testnet_conf = LndConfiguration()
+    bitcoin_mainnet_conf = BitcoinConfiguration(network='mainnet')
+    bitcoin_testnet_conf = BitcoinConfiguration(network='testnet')
+    lnd_mainnet_conf = LndConfiguration(network='mainnet')
+    lnd_testnet_conf = LndConfiguration(network='testnet')
     command_generator = CommandGenerator(
         testnet_conf=Configuration('testnet',
                                    bitcoin_configuration=bitcoin_testnet_conf,

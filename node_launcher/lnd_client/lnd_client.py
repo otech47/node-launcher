@@ -39,7 +39,7 @@ class LndClient(object):
         self.credentials = grpc.composite_channel_credentials(cert_credentials,
                                                               auth_credentials)
 
-        self.grpc_channel = grpc.secure_channel(f'localhost:{self.c.ports.grpc}',
+        self.grpc_channel = grpc.secure_channel(f'localhost:{self.c.lnd.grpc_port}',
                                                 self.credentials)
         self.lnd_client = lnrpc.LightningStub(self.grpc_channel)
         self.wallet_unlocker = lnrpc.WalletUnlockerStub(self.grpc_channel)

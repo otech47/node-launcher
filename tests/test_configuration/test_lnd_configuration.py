@@ -10,7 +10,7 @@ from node_launcher.utilities import is_port_in_use
 
 @pytest.fixture
 def lnd_configuration():
-    lnd_configuration = LndConfiguration()
+    lnd_configuration = LndConfiguration(network='testnet')
     return lnd_configuration
 
 
@@ -19,10 +19,10 @@ class TestDirectoryConfiguration(object):
         assert os.path.isdir(lnd_configuration.lnddir)
 
     def test_rest(self, lnd_configuration: LndConfiguration):
-        assert not is_port_in_use(lnd_configuration.rest)
+        assert not is_port_in_use(lnd_configuration.rest_port)
 
     def test_node(self, lnd_configuration: LndConfiguration):
-        assert not is_port_in_use(lnd_configuration.node)
+        assert not is_port_in_use(lnd_configuration.node_port)
 
     def test_grpc(self, lnd_configuration: LndConfiguration):
-        assert not is_port_in_use(lnd_configuration.grpc)
+        assert not is_port_in_use(lnd_configuration.grpc_port)
