@@ -23,11 +23,7 @@ class NetworkGroupBox(QtWidgets.QGroupBox):
         super().__init__(network)
         self.network = network
         self.node_launcher = node_launcher
-        self.lnd_client = LndClient(getattr(self.node_launcher.command_generator,
-                                            self.network))
-
         self.password_dialog = QInputDialog(self)
-        self.seed_dialog = SeedDialog(self)
 
         layout = QtWidgets.QVBoxLayout()
         layout.addWidget(ImageLabel(f'bitcoin-{network}.png'))
@@ -59,17 +55,23 @@ class NetworkGroupBox(QtWidgets.QGroupBox):
 
         layout.addWidget(HorizontalLine())
 
+        # Unlock button
+        self.unlock_wallet_button = QtWidgets.QPushButton('Unlock Wallet')
+        # noinspection PyUnresolvedReferences
+        self.unlock_wallet_button.clicked.connect(self.unlock_wallet)
+        layout.addWidget(self.unlock_wallet_button)
+
         # Initialize wallet button
         self.initialize_wallet_button = QtWidgets.QPushButton('Initialize Wallet')
         # noinspection PyUnresolvedReferences
         self.initialize_wallet_button.clicked.connect(self.initialize_wallet)
         layout.addWidget(self.initialize_wallet_button)
 
-        # Unlock button
-        self.unlock_wallet_button = QtWidgets.QPushButton('Unlock Wallet')
+        # Recover wallet button
+        self.recover_wallet_button = QtWidgets.QPushButton('Recover Wallet')
         # noinspection PyUnresolvedReferences
-        self.unlock_wallet_button.clicked.connect(self.password_prompt)
-        layout.addWidget(self.unlock_wallet_button)
+        self.recover_wallet_button.clicked.connect(self.recover_wallet)
+        layout.addWidget(self.recover_wallet_button)
 
         layout.addWidget(HorizontalLine())
 
@@ -113,33 +115,85 @@ class NetworkGroupBox(QtWidgets.QGroupBox):
                            f'{self.network}_rest_url')()
         QClipboard().setText(rest_url)
 
-    def password_prompt(self):
+    def unlock_wallet(self):
         password, ok = QInputDialog.getText(self.password_dialog,
                                             f'Unlock {self.network} LND Wallet',
-                                            'Password',
+                                            'Wallet Password',
                                             QLineEdit.Password)
         if not ok:
             return
         try:
-            self.lnd_client.unlock(password)
+            self.node_launcher.unlock_wallet(network=self.network, wallet_password=password)
         except _Rendezvous as e:
             self.error_message.showMessage(e._state.details)
             return
 
     def initialize_wallet(self):
         try:
-            generate_seed_response = self.lnd_client.generate_seed()
-
-            password, ok = QInputDialog.getText(self.password_dialog,
-                                                f'Initialize {self.network} LND Wallet',
-                                                'Password',
-                                                QLineEdit.Password)
+            new_wallet_password, ok = QInputDialog.getText(self.password_dialog,
+                                                           f'Initialize {self.network} LND Wallet',
+                                                           'New Wallet Password',
+                                                           QLineEdit.Password)
             if not ok:
                 return
-            self.seed_dialog.show()
-           # initialize_wallet_response = self.lnd_client.initialize_wallet(
-            #    password, generate_seed_response.cipher_seed_mnemonic)
+
+            seed_password, ok = QInputDialog.getText(self.password_dialog,
+                                                     f'Initialize {self.network} LND Wallet',
+                                                     'New Seed Password (Optional)',
+                                                     QLineEdit.Password)
+            if not ok:
+                return
+            if not seed_password:
+                seed_password = None
+            generate_seed_response = self.node_launcher.generate_seed(network=self.network,
+                                                                      seed_password=seed_password)
+
+            seed_text = ''.join([f'{index + 1}: {value}\n' for index, value
+                                 in enumerate(generate_seed_response)])
+            seed_dialog = SeedDialog()
+            seed_dialog.text.setText(seed_text)
+            seed_dialog.show()
+            self.node_launcher.initialize_wallet(network=self.network,
+                                                 wallet_password=new_wallet_password,
+                                                 seed=generate_seed_response,
+                                                 seed_password=seed_password)
 
         except _Rendezvous as e:
+            # noinspection PyProtectedMember
+            self.error_message.showMessage(e._state.details)
+            return
+
+    def recover_wallet(self):
+        try:
+            new_wallet_password, ok = QInputDialog.getText(self.password_dialog,
+                                                           f'Restore {self.network} LND Wallet',
+                                                           'New Wallet Password',
+                                                           QLineEdit.Password)
+            if not ok:
+                return
+
+            seed_password, ok = QInputDialog.getText(self.password_dialog,
+                                                     f'Restore {self.network} LND Wallet',
+                                                     'Seed Password (Optional)',
+                                                     QLineEdit.Password)
+            if not ok:
+                return
+            if not seed_password:
+                seed_password = None
+
+            seed, ok = QInputDialog.getText(self.password_dialog,
+                                            f'Initialize {self.network} LND Wallet',
+                                            'Seed')
+            if not ok:
+                return
+            seed_list = seed.split(' ')
+
+            self.node_launcher.initialize_wallet(network=self.network,
+                                                 wallet_password=new_wallet_password,
+                                                 seed=seed_list,
+                                                 seed_password=seed_password,
+                                                 recovery_window=10000)
+        except _Rendezvous as e:
+            # noinspection PyProtectedMember
             self.error_message.showMessage(e._state.details)
             return

@@ -22,7 +22,7 @@ class TestLndClient(object):
 
     def test_initialize_wallet(self, mocked_lnd_client: LndClient):
         mocked_lnd_client.initialize_wallet(
-            password='test_password',
+            wallet_password='test_password',
             seed=['test', 'mnemonic']
         )
         assert mocked_lnd_client.wallet_unlocker.called_once()

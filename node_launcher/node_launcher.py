@@ -81,7 +81,25 @@ class NodeLauncher(object):
         result = self.launch_terminal(command)
         return result
 
-    def unlock_wallet(self, network: str, password: str):
-        lnd_client = LndClient(getattr(self.command_generator, network))
-        response = lnd_client.unlock(password)
-        print('here')
+    def unlock_wallet(self, network: str, wallet_password: str):
+        network_config = getattr(self.command_generator, network)
+        lnd_client = LndClient(network_config)
+        response = lnd_client.unlock(wallet_password=wallet_password)
+        return response
+
+    def generate_seed(self, network: str, seed_password: str = None) -> List[str]:
+        network_config = getattr(self.command_generator, network)
+        lnd_client = LndClient(network_config)
+        response = lnd_client.generate_seed(seed_password=seed_password)
+        return response.cipher_seed_mnemonic
+
+    def initialize_wallet(self, network: str, wallet_password: str,
+                          seed: List[str], seed_password: str = None,
+                          recovery_window: int = None):
+        network_config = getattr(self.command_generator, network)
+        lnd_client = LndClient(network_config)
+        response = lnd_client.initialize_wallet(wallet_password=wallet_password,
+                                                seed=seed,
+                                                seed_password=seed_password,
+                                                recovery_window=recovery_window)
+        return response

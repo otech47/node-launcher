@@ -1,40 +1,9 @@
-from unittest.mock import MagicMock
-
 import pytest
 from PySide2.QtCore import Qt
 from PySide2.QtGui import QClipboard
 from PySide2.QtTest import QTest
 
-from node_launcher.command_generator import CommandGenerator
-from node_launcher.configuration import Configuration, LndConfiguration
-from node_launcher.configuration.bitcoin_configuration import BitcoinConfiguration
 from node_launcher.gui.launch_widget import LaunchWidget
-from node_launcher.node_launcher import NodeLauncher
-
-
-@pytest.fixture
-def launch_widget():
-    bitcoin_mainnet_conf = BitcoinConfiguration(network='mainnet')
-    bitcoin_testnet_conf = BitcoinConfiguration(network='testnet')
-    lnd_mainnet_conf = LndConfiguration(network='mainnet')
-    lnd_testnet_conf = LndConfiguration(network='testnet')
-    command_generator = CommandGenerator(
-        testnet_conf=Configuration('testnet',
-                                   bitcoin_configuration=bitcoin_testnet_conf,
-                                   lnd_configuration=lnd_testnet_conf),
-        mainnet_conf=Configuration('mainnet',
-                                   bitcoin_configuration=bitcoin_mainnet_conf,
-                                   lnd_configuration=lnd_mainnet_conf)
-    )
-    node_launcher = NodeLauncher(command_generator)
-    node_launcher.testnet_bitcoin_qt_node = MagicMock(return_value=None)
-    node_launcher.mainnet_bitcoin_qt_node = MagicMock(return_value=None)
-    node_launcher.testnet_lnd_node = MagicMock(return_value=None)
-    node_launcher.mainnet_lnd_node = MagicMock(return_value=None)
-    launch_widget = LaunchWidget(node_launcher)
-    launch_widget.mainnet_group_box.lnd_client = MagicMock()
-    launch_widget.testnet_group_box.lnd_client = MagicMock()
-    return launch_widget
 
 
 class TestGuiUnitTests(object):
