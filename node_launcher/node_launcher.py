@@ -62,19 +62,23 @@ class NodeLauncher(object):
         self.launch_terminal = launch_terminal_fn
 
     def testnet_bitcoin_qt_node(self):
-        result = self.launch(self.command_generator.testnet_bitcoin_qt())
+        command = self.command_generator.testnet_bitcoin_qt()
+        result = self.launch(command)
         return result
 
     def mainnet_bitcoin_qt_node(self):
-        result = self.launch(self.command_generator.mainnet_bitcoin_qt())
+        command = self.command_generator.mainnet_bitcoin_qt()
+        result = self.launch(command)
         return result
 
     def testnet_lnd_node(self):
-        result = self.launch_terminal(self.command_generator.testnet_lnd())
+        command = self.command_generator.testnet_lnd()
+        result = self.launch_terminal(command)
         return result
 
     def mainnet_lnd_node(self):
-        result = self.launch_terminal(self.command_generator.mainnet_lnd())
+        command = self.command_generator.mainnet_lnd()
+        result = self.launch_terminal(command)
         return result
 
     def unlock_wallet(self, network: str, password: str):

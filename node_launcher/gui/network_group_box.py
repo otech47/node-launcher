@@ -131,7 +131,7 @@ class NetworkGroupBox(QtWidgets.QGroupBox):
             generate_seed_response = self.lnd_client.generate_seed()
 
             password, ok = QInputDialog.getText(self.password_dialog,
-                                                f'Unlock {self.network} LND Wallet',
+                                                f'Initialize {self.network} LND Wallet',
                                                 'Password',
                                                 QLineEdit.Password)
             if not ok:
