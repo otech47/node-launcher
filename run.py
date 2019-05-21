@@ -1,26 +1,22 @@
 import sys
 
-from PySide2 import QtWidgets
+from node_launcher.constants import (
+    OPERATING_SYSTEM, NODE_LAUNCHER_RELEASE,
+    TARGET_BITCOIN_RELEASE, TARGET_LND_RELEASE
+)
+from node_launcher.gui.application import Application
+from node_launcher.logging import log
 
-from node_launcher.command_generator import CommandGenerator
-from node_launcher.configuration import Configuration
-from node_launcher.configuration.bitcoin_configuration import \
-    BitcoinConfiguration
-from node_launcher.gui.launch_widget import LaunchWidget
-from node_launcher.node_launcher import NodeLauncher
+if __name__ == '__main__':
+    # sys.excepthook = except_hook
 
-if __name__ == "__main__":
-    app = QtWidgets.QApplication([])
-
-    bitcoin_mainnet_conf = BitcoinConfiguration()
-    bitcoin_testnet_conf = BitcoinConfiguration()
-    command_generator = CommandGenerator(
-        testnet_conf=Configuration('testnet', bitcoin_testnet_conf),
-        mainnet_conf=Configuration('mainnet', bitcoin_mainnet_conf)
+    log.info(
+        'constants',
+        OPERATING_SYSTEM=OPERATING_SYSTEM,
+        NODE_LAUNCHER_RELEASE=NODE_LAUNCHER_RELEASE,
+        TARGET_BITCOIN_RELEASE=TARGET_BITCOIN_RELEASE,
+        TARGET_LND_RELEASE=TARGET_LND_RELEASE
     )
-    node_launcher = NodeLauncher(command_generator)
-    widget = LaunchWidget(node_launcher)
 
-    widget.show()
-
-    sys.exit(app.exec_())
+    app = Application()
+    sys.exit(app.start())

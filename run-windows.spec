@@ -1,4 +1,5 @@
 # -*- mode: python -*-
+from PyInstaller.utils.hooks import collect_data_files
 
 block_cipher = None
 
@@ -7,9 +8,10 @@ a = Analysis(['run.py'],
              pathex=['C:\\Users\\pierre\\PycharmProjects\\node-launcher'],
              binaries=[],
              datas=[
-                 ('node_launcher/assets/*.png', 'assets')
-             ],
-             hiddenimports=[],
+                 ('node_launcher/gui/assets/*.png', 'assets')
+             ] + collect_data_files('shiboken2', include_py_files=True, subdir='support')
+             + collect_data_files('PySide2', include_py_files=True, subdir='support'),
+             hiddenimports=['setuptools', 'pypiwin32', 'win32timezone'],
              hookspath=[],
              runtime_hooks=[],
              excludes=[],
@@ -25,7 +27,7 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name='Node Launcher',
+          name='Windows.Node.Launcher.DoNotUse',
           debug=False,
           bootloader_ignore_signals=False,
           strip=False,
@@ -39,7 +41,21 @@ exe = EXE(pyz,
           a.zipfiles,
           a.datas,
           [],
-          name='Node Launcher Debug',
+          name='Windows.Node.Launcher',
+          debug=False,
+          bootloader_ignore_signals=False,
+          strip=False,
+          upx=True,
+          runtime_tmpdir=None,
+          console=False )
+
+exe = EXE(pyz,
+          a.scripts,
+          a.binaries,
+          a.zipfiles,
+          a.datas,
+          [],
+          name='Debug.Windows.Node.Launcher',
           debug=True,
           bootloader_ignore_signals=False,
           strip=False,
